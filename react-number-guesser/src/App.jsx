@@ -2,13 +2,22 @@ import { useState } from 'react';
 import './App.css';
 
 const App = () => {
-  const [guess, setGuess] = useState(0);
+  const [guess, setGuess] = useState('');
   const [computerNumber, setComputerNumber] = useState(0);
   const [result, setResult] = useState('');
 
-  const handleGuess = () => {
+  let resultClass = '';
 
-    if (guess < 1 || guess > 10) {
+  if (result === 'You guessed correctly.') {
+    resultClass = 'success';
+  } else if (result === 'Try again.') {
+    resultClass = 'error';
+  } else if (result !== '') {
+    resultClass = 'warning';
+  }
+
+  const handleGuess = () => {
+    if (guess === '' || guess < 1 || guess > 10) {
       setResult('Please enter a number between 1 and 10.');
       return;
     }
@@ -27,10 +36,10 @@ const App = () => {
   };
 
   const handleReset = () => {
-    setGuess(0);
+    setGuess('');
     setComputerNumber(0);
     setResult('');
-  }
+  };
 
   const computerRandomNumber = () => {
     const randomNumber = Math.floor(Math.random() * 10 + 1);
@@ -38,19 +47,33 @@ const App = () => {
   };
 
   return (
-    <main>
+    <main className="game-card">
       <h1>React Number Guesser</h1>
       <p>Guess the number and beat the computer!</p>
       <p>Your guess is {guess}</p>
       <p>Computers number: {computerNumber}</p>
-      <p>{result}</p>
+      <p
+        className={`game-result ${resultClass}`}
+      >
+        {result}
+      </p>
       <input
+        min={1}
+        max={10}
         type="number"
         value={guess}
-        onChange={(e) => setGuess(Number(e.target.value))}
+        onChange={(e) =>
+          setGuess(e.target.value === '' ? '' : Number(e.target.value))
+        }
       />
-      <button onClick={handleGuess}>Set Guess</button>
-      <button onClick={handleReset}>Reset</button>
+      <div className="button-group">
+        <button className="btn-primary" onClick={handleGuess}>
+          Set Guess
+        </button>
+        <button className="btn-secondary" onClick={handleReset}>
+          Reset
+        </button>
+      </div>
     </main>
   );
 };
